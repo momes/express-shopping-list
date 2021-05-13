@@ -28,7 +28,7 @@ router.post("/", middleware.validateItem, function (req, res, next) {
         price: +req.body.price
     }
     items.push(add_item)
-    return res.json({added: add_item});
+    return res.status(201).json({added: add_item});
   });
 
 /** GET /items: get list of items
