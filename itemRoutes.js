@@ -1,3 +1,5 @@
+//add use strict
+
 /** Routes for sample app. */
 
 const express = require("express");
@@ -6,7 +8,9 @@ const { items } = require("./fakeDb");
 const router = new express.Router();
 
 const { NotFoundError, BadRequestError } = require("./expressError");
-const middleware = require("./middleware");
+// didn't end up using badrequesterror, remove this first
+const middleware = require("./middleware");//rename this, can just destructure middleware
+// and bring in the thing we want
 
 /** GET /items: get list of items
  * 
@@ -23,7 +27,7 @@ router.get("/", function (req, res, next) {
   {added: {name: "popsicle", price: 1.45}}
 */
 router.post("/", middleware.validateItem, function (req, res, next) {
-    add_item = {
+    add_item = { //change to camelCase and add let or const
         name: req.body.name,
         price: +req.body.price
     }
@@ -41,7 +45,7 @@ router.get("/:name", function (req, res, next) {
   let desiredItemName = req.params.name;
   let foundItem = items.find(item => item.name === desiredItemName);
 
-  if (!foundItem){
+  if (!foundItem){ //could be better as if foundItem === undefined
     throw new NotFoundError("Item not found");
   }
 
@@ -70,6 +74,8 @@ router.patch('/:name', middleware.validateItem, function (req, res, next){
   let newItemName = req.body.name;
   let newItemPrice = req.body.price;
 
+  const {name,price} = req.body; //destructuring
+
   foundItem.price = +newItemPrice;
   foundItem.name = newItemName;
 
@@ -84,9 +90,12 @@ DELETE /items/:name: delete item:
 router.delete('/:name', function (req, res, next){
 
   let desiredItemName = req.params.name;
-  let foundItem = items.find(item => item.name === desiredItemName)
+  let foundItemIdx = items.findIndex(item => item.name === desiredItemName);
 
-  items.splice(items.indexOf(foundItem), 1);
+  //error message to account for if foundItemIdx === -1
+  //throw error
+
+  items.splice(foundItemIdx, 1);
 
   return res.json({"message": "Deleted"});
 })
